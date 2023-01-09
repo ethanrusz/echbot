@@ -5,7 +5,7 @@ struct Data {}
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-// Basically a ping command
+// Basically a ping command. Should be moved to a mod.
 #[poise::command(slash_command, prefix_command)]
 async fn slur(
     ctx: Context<'_>,
@@ -19,7 +19,7 @@ async fn slur(
 async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![slur()],
+            commands: vec![slur()], // Intellij doesn't like this, but it's fine.
             ..Default::default()
         })
         .token(std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN"))
