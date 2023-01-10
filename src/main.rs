@@ -1,4 +1,9 @@
 use poise::serenity_prelude as serenity;
+use rand::seq::IteratorRandom;
+use std::{
+    fs::File,
+    io::{BufRead, BufReader}
+};
 
 struct Data {}
 
@@ -10,8 +15,12 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 async fn slur(
     ctx: Context<'_>,
 ) -> Result<(), Error> {
-    let response = "If you don't like my content or the way I act, don't watch me.";
-    ctx.say(response).await?;
+    let file = File::open("quotes.txt").unwrap_or_else(|_e| panic!("Quote file missing."));
+    let file = BufReader::new(file);
+    let quotes = file.lines().map(|res| res.expect("Failed to read line."));
+    let quote = quotes.choose(&mut rand::thread_rng()).expect("No lines in file.");
+
+    ctx.say(quote).await?;
     Ok(())
 }
 
@@ -19,7 +28,7 @@ async fn slur(
 async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![slur()], // Intellij doesn't like this, but it's fine.
+            commands: vec![slur()], // IntelliJ doesn't like this, but it's fine.
             ..Default::default()
         })
         .token(std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN"))
