@@ -15,15 +15,16 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 async fn slur(
     ctx: Context<'_>,
 ) -> Result<(), Error> {
-    let file = File::open("quotes.txt").unwrap_or_else(|_e| panic!("Quote file missing.")); // Open quotes file
-    let file = BufReader::new(file); // Read quotes file
+    let file = File::open("quotes.txt").unwrap_or_else(|_e| panic!("Quote file missing.")); // Open the quotes file
+    let file = BufReader::new(file); // Read the quotes file
     let quotes = file.lines().map(|res| res.expect("Failed to read line."));
-    let quote = quotes.choose(&mut rand::thread_rng()).expect("No lines in file."); // Pick random quote
+    let quote = quotes.choose(&mut rand::thread_rng()).expect("No lines in file."); // Pick a random quote
 
     ctx.say(quote).await?;
     Ok(())
 }
 
+/// Split up users for custom joust matches.
 #[poise::command(slash_command, prefix_command)]
 async fn team_up(
     ctx: Context<'_>,
@@ -33,6 +34,7 @@ async fn team_up(
     let mut v = ctx.guild().unwrap().voice_states; // Get hashmap of users' voice states within the guild
     v.retain(|_, s| s.channel_id == Some(c.id())); // Drop users not active in requested voice channel from hashmap
     let res = format!("Channel {} has {} active users", c.id(), v.keys().len());
+
     ctx.say(res).await?;
     Ok(())
 }
