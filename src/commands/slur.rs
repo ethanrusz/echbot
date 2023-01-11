@@ -7,7 +7,7 @@ use std::{
 };
 
 /// Basically a ping command
-#[poise::command(slash_command, prefix_command)]
+#[poise::command(slash_command)]
 pub(crate) async fn slur(
     ctx: Context<'_>,
 ) -> Result<(), Error> {

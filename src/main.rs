@@ -13,7 +13,7 @@ async fn main() {
         .options(poise::FrameworkOptions {
             commands: vec![
                 commands::slur::slur(),
-                commands::team_up::team_up(),
+                commands::team::team(),
                 commands::random::random(),
             ], // IntelliJ doesn't like this, but it's fine.
             ..Default::default()
