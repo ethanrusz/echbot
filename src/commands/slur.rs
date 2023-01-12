@@ -1,5 +1,5 @@
 use crate::{Context, Error};
-
+use crate::serenity;
 use rand::seq::IteratorRandom;
 use std::{
     fs::File,
@@ -19,6 +19,11 @@ pub(crate) async fn slur(
     let quote = quotes.choose(&mut rand::thread_rng())
         .expect("No lines in file."); // Pick a random quote
 
-    ctx.say(quote).await?;
+    ctx.send(|f| f
+            .embed(|f| f
+                .title("DMBrandon Sez:")
+                .description(format!("\"{}\"", quote))
+                .color(serenity::Colour::BLUE)
+            )).await?; // Send embed with team picks
     Ok(())
 }

@@ -1,5 +1,4 @@
 mod commands;
-mod api;
 
 use poise::serenity_prelude as serenity;
 

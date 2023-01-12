@@ -1,5 +1,7 @@
 use crate::{Context, Error};
 
+use crate::commands::api::get_random_god;
+
 /// Picks a random something
 #[poise::command(slash_command, subcommands("god", "mode"))]
 pub(crate) async fn random(
@@ -13,7 +15,9 @@ pub(crate) async fn random(
 pub(crate) async fn god(
     ctx: Context<'_>,
 ) -> Result<(), Error> {
-    ctx.say("Waiting for that sweet API access.").await?;
+    let god = get_random_god();
+
+    ctx.say(format!("{}", god)).await?;
     Ok(())
 }
 
