@@ -20,10 +20,10 @@ pub(crate) async fn slur(
         .expect("No lines in file."); // Pick a random quote
 
     ctx.send(|f| f
-            .embed(|f| f
-                .title("DMBrandon Sez:")
-                .description(format!("\"{}\"", quote))
-                .color(serenity::Colour::BLUE)
-            )).await?; // Send embed with team picks
+        .embed(|f| f
+            .title("DMBrandon Sez:")
+            .description(format!("\"{}\"", quote))
+            .color(serenity::Colour::GOLD)
+        )).await?; // Send embed with team picks
     Ok(())
 }

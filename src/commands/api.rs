@@ -1,27 +1,31 @@
 use chrono;
 use crate::Error;
+use serde::{Serialize, Deserialize};
 
-fn get_utc_timestamp() -> String {
-    return chrono::Utc::now().format("%Y%m%d%H%M%S").to_string();
+#[derive(Debug, Serialize, Deserialize)]
+struct Session {
+    ret_msg: String,
+    session_id: String,
+    timestamp: String,
 }
 
-fn generate_signature(timestamp: String) -> String {
-    let dev_id = std::env::var("DEV_ID")
+pub(crate) async fn get_random_god() -> Result<(), Error> {
+    let timestamp = chrono::Utc::now().format("%Y%m%d%H%M%S").to_string();
+    let method = "createsession";
+    let dev_id: String = std::env::var("DEV_ID")
         .expect("Missing DEV_ID");
     let auth_key = std::env::var("AUTH_KEY")
-        .expect("Missing AUTH_KEY"); // Get Hi-Rez API credentials from env
-    let signature = md5::compute(format!("{}createsession{}{}", dev_id, auth_key, timestamp));
+        .expect("Missing AUTH_KEY");
 
-    return format!("{:?}", signature);
-}
+    let hash = md5::compute(format!("{}{}{}{}", dev_id, method, auth_key, timestamp));
+    let signature = format!("{:x}", hash);
 
-fn create_session() -> Result<(), Error> {
-    let timestamp = get_utc_timestamp();
-    let signature: String = generate_signature(timestamp);
-    println!("{}", signature);
+    let request = format!("https://api.smitegame.com/smiteapi.svc/createsessionJson/{}/{}/{}", dev_id, signature, timestamp);
+    println!("{}", request);
+    let response = reqwest::get(&request).await?;
+
+    let sessions: Vec<Session> = response.json().await?;
+    println!("{:?}", sessions);
+
     Ok(())
-}
-
-pub(crate) fn get_random_god() -> &'static str {
-    return "some god";
 }

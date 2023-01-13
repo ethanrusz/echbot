@@ -14,7 +14,6 @@ async fn main() {
             commands: vec![
                 commands::slur::slur(),
                 commands::team::team(),
-                commands::random::random(),
             ], // IntelliJ doesn't like this, but it's fine.
             ..Default::default()
         })

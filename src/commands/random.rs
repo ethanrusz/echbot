@@ -15,9 +15,9 @@ pub(crate) async fn random(
 pub(crate) async fn god(
     ctx: Context<'_>,
 ) -> Result<(), Error> {
-    let god = get_random_god();
-
-    ctx.say(format!("{}", god)).await?;
+    let god = "some god";
+    get_random_god().await?;
+    // ctx.say(format!("{}", god)).await?;
     Ok(())
 }
 
