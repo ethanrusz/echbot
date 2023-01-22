@@ -11,23 +11,24 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![
-                commands::slur::slur(),
-                commands::team::team(),
-            ], // IntelliJ doesn't like this, but it's fine.
+            commands: vec![commands::slur::slur(), commands::team::team()], // IntelliJ doesn't like this, but it's fine.
             ..Default::default()
         })
-        .token(std::env::var("DISCORD_TOKEN")
-            .expect("Missing DISCORD_TOKEN"))
+        .token(std::env::var("DISCORD_TOKEN").expect("Missing DISCORD_TOKEN"))
         .intents(serenity::GatewayIntents::non_privileged()) // Set intents for Discord dev portal
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
                 poise::builtins::register_in_guild(
                     ctx,
                     &framework.options().commands,
-                    serenity::GuildId(std::env::var("GUILD_ID")
-                        .expect("Missing GUILD_ID") // Get GID from env and parse
-                        .parse::<u64>().unwrap())).await?; // Update slash commands in GID
+                    serenity::GuildId(
+                        std::env::var("GUILD_ID")
+                            .expect("Missing GUILD_ID") // Get GID from env and parse
+                            .parse::<u64>()
+                            .unwrap(),
+                    ),
+                )
+                .await?; // Update slash commands in GID
                 Ok(Data {})
             })
         });
