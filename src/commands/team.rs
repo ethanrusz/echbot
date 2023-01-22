@@ -1,13 +1,15 @@
 use std::collections::HashMap;
-use crate::{Context, Error};
-use crate::serenity;
-use poise::serenity_prelude::{Guild, Member, UserId, VoiceState};
-use rand::seq::SliceRandom;
 use std::string::String;
 
-/// Return a string of pingable IDs from a slice of UserIds
-fn team_to_ping(team: &[&&UserId]) -> String {
-    return team.iter().map(|o| format!("<@{}>", o.to_string())).collect::<Vec<String>>().join(", ");
+use poise::serenity_prelude::{Guild, Member, UserId, VoiceState};
+use rand::seq::SliceRandom;
+
+use crate::{Context, Error};
+use crate::serenity;
+
+/// Return a string of pingable IDs from a slice of string UserIds
+fn team_to_ping(team: &[&String]) -> String {
+    return team.iter().map(|o| format!("<@{}>", o)).collect::<Vec<String>>().join(", ");
 }
 
 /// Splits up players for custom matches
@@ -37,9 +39,8 @@ pub(crate) async fn team(
     }
 
     let uuid_team: u64 = ctx.id(); // Grab context ID for action row
-    let users: Vec<&UserId> = Vec::from_iter(voice_states.keys()); // Get vec of PIDs
-    let players: Vec<&&UserId> = users.choose_multiple(
-        &mut rand::thread_rng(), size as usize * 2).collect(); // Pick players randomly into slice
+    let users: Vec<String> = Vec::from_iter(voice_states.keys().map(|u| u.to_string())); // Get vec of PIDs
+    let players: Vec<&String> = users.choose_multiple(&mut rand::thread_rng(), size as usize * 2).collect(); // Pick players randomly into slice
     let (order, chaos) = players.split_at(players.len() / 2); // Split slice into two teams
 
     ctx.send(|f| f
@@ -61,30 +62,31 @@ pub(crate) async fn team(
 
     while let Some(mci) = serenity::CollectComponentInteraction::new(ctx) // Handle the interaction
         .await {
-        let guild: Guild = ctx.guild().unwrap();
+        let guild: Guild = ctx.guild().unwrap(); // Grab guild from context
         for user in chaos {
-            let member: Member = guild.member(ctx, UserId(*user.as_u64())).await?; // Get the member in the correct guild
+            let member: Member = guild.member(ctx, UserId(user.parse().unwrap())).await?; // Get the member in the correct guild
             member.move_to_voice_channel(ctx, chaos_channel.id()).await?; // Move the member to the correct voice channel
         }
 
-        mci.create_interaction_response(ctx, |ir| { // Update embed
-            ir.kind(serenity::InteractionResponseType::UpdateMessage).interaction_response_data(|f| f
-                .embed(|f| f
-                    .title(format!("Custom {}v{} Teams", size, size))
-                    .description("VVGO VVW VVX")
-                    .field("Order", team_to_ping(order), false)
-                    .field("Chaos", team_to_ping(chaos), false)
-                    .color(serenity::Colour::DARK_GREEN)
-                ).components(|c| c // Create an action row with button
-                .create_action_row(|a| a
-                    .create_button(|b| b
-                        .disabled(true) // with disabled button
-                        .style(serenity::ButtonStyle::Primary)
-                        .label("Quit Sibelius") // and new text
-                        .custom_id(uuid_team) // Use the context ID as button ID
+        mci.create_interaction_response(ctx, |ir| { // Edit embed
+            ir.kind(serenity::InteractionResponseType::UpdateMessage)
+                .interaction_response_data(|f| f
+                    .embed(|f| f
+                        .title(format!("Custom {}v{} Teams", size, size))
+                        .description("VVGO VVW VVX")
+                        .field("Order", team_to_ping(order), false)
+                        .field("Chaos", team_to_ping(chaos), false)
+                        .color(serenity::Colour::DARK_GREEN)
+                    ).components(|c| c // Create an action row with button
+                    .create_action_row(|a| a
+                        .create_button(|b| b
+                            .disabled(true) // with disabled button
+                            .style(serenity::ButtonStyle::Primary)
+                            .label("Quit Sibelius") // and new text
+                            .custom_id(uuid_team) // Use the context ID as button ID
+                        )
                     )
-                )
-            ))
+                ))
         }).await?;
     }
     Ok(())
