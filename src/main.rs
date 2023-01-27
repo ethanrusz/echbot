@@ -1,6 +1,6 @@
-mod commands;
-
 use poise::serenity_prelude as serenity;
+
+mod commands;
 
 struct Data {}
 
@@ -29,6 +29,9 @@ async fn main() {
                     ),
                 )
                 .await?; // Update slash commands in GID
+
+                ctx.set_activity(serenity::Activity::playing("SMITE")).await;
+
                 Ok(Data {})
             })
         });

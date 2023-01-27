@@ -64,16 +64,16 @@ pub(crate) async fn team(
                 .color(serenity::Colour::DARK_GREEN)
         })
         .components(|c| {
-            c // Create an action row with button
-                .create_action_row(|a| {
-                    a.create_button(
-                        |b| {
-                            b.style(serenity::ButtonStyle::Primary)
-                                .label("Swap Channels")
-                                .custom_id(uuid_team)
-                        }, // Use the context ID as button ID
-                    )
-                })
+            c.create_action_row(|a| {
+                // Create an action row with button
+                a.create_button(
+                    |b| {
+                        b.style(serenity::ButtonStyle::Primary)
+                            .label("Swap Channels")
+                            .custom_id(uuid_team)
+                    }, // Use the context ID as button ID
+                )
+            })
         })
     })
     .await?; // Send embed with team picks
@@ -101,18 +101,18 @@ pub(crate) async fn team(
                             .color(serenity::Colour::DARK_GREEN)
                     })
                     .components(|c| {
-                        c // Create an action row with button
-                            .create_action_row(|a| {
-                                a.create_button(
-                                    |b| {
-                                        b
+                        c.create_action_row(|a| {
+                            // Create an action row with button
+                            a.create_button(
+                                |b| {
+                                    b
                             .disabled(true) // with disabled button
                             .style(serenity::ButtonStyle::Primary)
                             .label("Quit Sibelius") // and new text
                             .custom_id(uuid_team)
-                                    }, // Use the context ID as button ID
-                                )
-                            })
+                                }, // Use the context ID as button ID
+                            )
+                        })
                     })
                 })
         })
