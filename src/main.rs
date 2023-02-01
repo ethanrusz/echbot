@@ -2,7 +2,7 @@ use poise::serenity_prelude as serenity;
 
 mod commands;
 
-struct Data {}
+pub struct Data {}
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
