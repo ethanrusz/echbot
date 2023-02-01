@@ -18,7 +18,7 @@ fn team_to_ping(team: &[&String]) -> String {
 
 /// Splits up players for custom matches
 #[poise::command(slash_command)]
-pub(crate) async fn team(
+pub async fn team(
     ctx: Context<'_>,
     #[description = "Your order voice channel"]
     #[rename = "order"]

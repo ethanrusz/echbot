@@ -1,3 +1,5 @@
 // Group all commands for registration
-pub(crate) mod slur;
-pub(crate) mod team;
+mod api;
+pub mod random;
+pub mod slur;
+pub mod team;
