@@ -15,6 +15,7 @@ async fn main() {
                 commands::slur::slur(),
                 commands::team::team(),
                 commands::random::random(),
+                commands::register::register(),
             ], // IntelliJ doesn't like this, but it's fine.
             ..Default::default()
         })
@@ -22,23 +23,10 @@ async fn main() {
         .intents(serenity::GatewayIntents::non_privileged()) // Set intents for Discord dev portal
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
-                poise::builtins::register_in_guild(
-                    ctx,
-                    &framework.options().commands,
-                    serenity::GuildId(
-                        std::env::var("GUILD_ID")
-                            .expect("Missing GUILD_ID") // Get GID from env and parse
-                            .parse::<u64>()
-                            .unwrap(),
-                    ),
-                )
-                .await?; // Update slash commands in GID
-
+                poise::builtins::register_globally(ctx, &framework.options().commands).await?; // Update slash commands
                 ctx.set_activity(serenity::Activity::playing("SMITE")).await;
-
                 Ok(Data {})
             })
         });
-
     framework.run().await.unwrap();
 }
