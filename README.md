@@ -1,6 +1,6 @@
 # echbot
 
-A trash bot for Smite fun.
+A helper bot for Smite fun.
 
 ## Environment
 
@@ -13,8 +13,3 @@ environment:
   - DEV_ID=your_hi-rez_dev_id
   - AUTH_KEY=your_hi-rez_auth_key
 ```
-
-## Quotes
-
-A `quotes.txt` file must be present in the root directory for the ping command to function. The format is one quote per
-line.
