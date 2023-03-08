@@ -15,7 +15,7 @@ pub async fn god(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(|f| {
         f.embed(|f| {
             f.title("Random God")
-                .description(format!("Try not to throw with **{}**, idiot.", god))
+                .description(format!("Your random god is **{god}**!"))
                 .color(serenity::Colour::BLUE)
         })
     })

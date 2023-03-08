@@ -19,9 +19,25 @@ pub struct God {
     ret_msg: Option<String>,
 }
 
-async fn get_utc_timestamp() -> Result<String, Error> {
-    let timestamp: String = chrono::Utc::now().format("%Y%m%d%H%M%S").to_string();
-    Ok(timestamp)
+#[derive(Deserialize, Debug)]
+#[allow(dead_code)]
+pub struct Profile {
+    #[serde(rename = "Name")]
+    pub name: Option<String>,
+    #[serde(rename = "Personal_Status_Message")]
+    pub personal_status_message: Option<String>,
+    pub hz_player_name: Option<String>,
+    #[serde(rename = "HoursPlayed")]
+    pub hours_played: i32,
+    #[serde(rename = "Losses")]
+    pub losses: i32,
+    #[serde(rename = "Wins")]
+    pub wins: i32,
+    pub ret_msg: Option<String>,
+}
+
+async fn get_utc_timestamp() -> String {
+    chrono::Utc::now().format("%Y%m%d%H%M%S").to_string()
 }
 
 async fn get_signature(
@@ -29,24 +45,20 @@ async fn get_signature(
     method: &str,
     auth_key: &String,
     timestamp: &String,
-) -> Result<String, Error> {
-    let hash: Digest = md5::compute(format!("{}{}{}{}", dev_id, method, auth_key, timestamp));
-    let signature: String = format!("{:x}", hash);
-    Ok(signature)
+) -> String {
+    let hash: Digest = md5::compute(format!("{dev_id}{method}{auth_key}{timestamp}"));
+    format!("{:x}", hash)
 }
 
 async fn create_session() -> Result<Session, Error> {
     let dev_id: String = std::env::var("DEV_ID").expect("Missing DEV_ID");
     let auth_key: String = std::env::var("AUTH_KEY").expect("Missing AUTH_KEY");
 
-    let timestamp: String = get_utc_timestamp().await?;
-    let signature: String = get_signature(&dev_id, "createsession", &auth_key, &timestamp).await?;
+    let timestamp: String = get_utc_timestamp().await;
+    let signature: String = get_signature(&dev_id, "createsession", &auth_key, &timestamp).await;
 
     let request: String = format!(
-        "https://api.smitegame.com/smiteapi.svc/createsessionJson/{dev_id}/{signature}/{timestamp}",
-        dev_id = dev_id,
-        signature = signature,
-        timestamp = timestamp
+        "https://api.smitegame.com/smiteapi.svc/createsessionJson/{dev_id}/{signature}/{timestamp}"
     );
 
     let response: Response = reqwest::get(&request).await?;
@@ -60,15 +72,11 @@ async fn get_gods() -> Result<Vec<God>, Error> {
 
     let session_id: String = create_session().await?.session_id;
 
-    let timestamp: String = get_utc_timestamp().await?;
-    let signature: String = get_signature(&dev_id, "getgods", &auth_key, &timestamp).await?;
+    let timestamp: String = get_utc_timestamp().await;
+    let signature: String = get_signature(&dev_id, "getgods", &auth_key, &timestamp).await;
 
     let request: String = format!(
-        "https://api.smitegame.com/smiteapi.svc/getgodsJson/{id}/{signature}/{session}/{timestamp}/1",
-        id = dev_id,
-        signature = signature,
-        session = session_id,
-        timestamp = timestamp,
+        "https://api.smitegame.com/smiteapi.svc/getgodsJson/{dev_id}/{signature}/{session_id}/{timestamp}/1"
     );
 
     let response: Response = reqwest::get(&request).await?;
@@ -78,9 +86,25 @@ async fn get_gods() -> Result<Vec<God>, Error> {
 
 pub async fn get_random_god() -> Result<String, Error> {
     let gods: Vec<God> = get_gods().await?;
-    let god: &God = gods
-        .choose(&mut rand::thread_rng())
-        .expect("Couldn't pick random god.");
+    let god: &God = gods.choose(&mut rand::thread_rng()).unwrap();
     let name: String = god.name.clone();
     Ok(name)
+}
+
+pub async fn get_player(player: String) -> Result<Vec<Profile>, Error> {
+    let dev_id: String = std::env::var("DEV_ID").expect("Missing DEV_ID");
+    let auth_key: String = std::env::var("AUTH_KEY").expect("Missing AUTH_KEY");
+
+    let session_id: String = create_session().await?.session_id;
+
+    let timestamp: String = get_utc_timestamp().await;
+    let signature: String = get_signature(&dev_id, "getplayer", &auth_key, &timestamp).await;
+
+    let request: String = format!(
+        "https://api.smitegame.com/smiteapi.svc/getplayerJson/{dev_id}/{signature}/{session_id}/{timestamp}/{player}"
+    );
+
+    let response: Response = reqwest::get(&request).await?;
+    let profiles: Vec<Profile> = response.json().await?;
+    Ok(profiles)
 }

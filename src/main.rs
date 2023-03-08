@@ -12,10 +12,11 @@ async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             commands: vec![
-                commands::slur::slur(),
+                commands::ping::ping(),
                 commands::team::team(),
                 commands::random::random(),
                 commands::register::register(),
+                commands::profile::profile(),
             ], // IntelliJ doesn't like this, but it's fine.
             ..Default::default()
         })
