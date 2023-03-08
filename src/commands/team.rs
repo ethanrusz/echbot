@@ -38,12 +38,12 @@ pub async fn team(
         // Make sure there are enough members in the voice channel
         ctx.send(|f| {
             f.embed(|f| {
-                f.title(format!("Custom {}v{} Teams", size, size))
-                    .description("You don't have enough friends for that, idiot.")
+                f.title(format!("Custom {size}v{size} Teams"))
+                    .description("There are not enough members in the call!")
                     .color(serenity::Colour::RED)
             })
         })
-        .await?; // Insult the user for not having enough friends
+        .await?;
         return Ok(()); // Break out early if there are not enough members
     }
 
@@ -57,7 +57,7 @@ pub async fn team(
     ctx.send(|f| {
         f.embed(|f| {
             f.title(format!("Custom {size}v{size} Teams"))
-                .description("VER")
+                .description("Click the button below to move the Chaos players.")
                 .field("Order", team_to_ping(order), false)
                 .field("Chaos", team_to_ping(chaos), false)
                 .color(serenity::Colour::DARK_GREEN)
@@ -94,7 +94,7 @@ pub async fn team(
                 .interaction_response_data(|f| {
                     f.embed(|f| {
                         f.title(format!("Custom {size}v{size} Teams"))
-                            .description("VVGO VVW VVX")
+                            .description("Good luck! Have fun!")
                             .field("Order", team_to_ping(order), false)
                             .field("Chaos", team_to_ping(chaos), false)
                             .color(serenity::Colour::DARK_GREEN)
