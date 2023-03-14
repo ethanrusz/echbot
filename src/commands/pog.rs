@@ -16,7 +16,7 @@ pub async fn up(ctx: Context<'_>) -> Result<(), Error> {
                 .color(serenity::Colour::DARK_GREEN)
         })
     })
-        .await?;
+    .await?;
     Ok(())
 }
 
@@ -30,6 +30,6 @@ pub async fn down(ctx: Context<'_>) -> Result<(), Error> {
                 .color(serenity::Colour::RED)
         })
     })
-        .await?;
+    .await?;
     Ok(())
 }
