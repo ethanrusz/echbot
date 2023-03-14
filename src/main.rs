@@ -17,6 +17,7 @@ async fn main() {
                 commands::random::random(),
                 commands::register::register(),
                 commands::profile::profile(),
+                commands::pog::pog(),
             ], // IntelliJ doesn't like this, but it's fine.
             ..Default::default()
         })
