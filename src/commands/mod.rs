@@ -5,3 +5,4 @@ pub mod profile;
 pub mod random;
 pub mod register;
 pub mod team;
+pub mod pog;
