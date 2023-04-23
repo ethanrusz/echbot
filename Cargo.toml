@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 poise = "0.5.2"
-tokio = { version = "1.21.2", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.24.2", features = ["macros", "rt-multi-thread"] }
 rand = "0.8.5"
 chrono = "0.4.23"
 md5 = "0.7.0"
