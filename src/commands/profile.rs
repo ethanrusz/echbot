@@ -22,8 +22,7 @@ pub async fn profile(
         return Ok(());
     }
 
-    let winrate =
-        (profile.wins as f32 / (profile.wins as f32 + profile.losses as f32)) * 100 as f32;
+    let winrate = (profile.wins as f32 / (profile.wins as f32 + profile.losses as f32)) * 100f32;
     ctx.send(|f| {
         f.embed(|f| {
             f.title(format!("{}", profile.name.as_ref().unwrap()))
@@ -32,11 +31,23 @@ pub async fn profile(
                     profile.hz_player_name.as_ref().unwrap()
                 ))
                 .field(
-                    "Status",
+                    "Clan Name",
+                    format!("{}", profile.clan.as_ref().unwrap_or(&String::from(""))),
+                    true,
+                )
+                .field(
+                    "Status Message",
                     format!("{}", profile.personal_status_message.as_ref().unwrap()),
                     false,
                 )
-                .field("Hours played", format!("{}", profile.hours_played), false)
+                .field("Level", format!("{}", profile.level), true)
+                .field("Hours Played", format!("{}", profile.hours_played), true)
+                .field("Leaves", format!("{}", profile.leaves), true)
+                .field(
+                    "Platform",
+                    format!("{}", profile.platform.as_ref().unwrap()),
+                    false,
+                )
                 .field("Wins", format!("{}", profile.wins), true)
                 .field("Losses", format!("{}", profile.losses), true)
                 .field("Winrate", format!("{:.2}%", winrate), true)
