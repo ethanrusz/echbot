@@ -33,6 +33,14 @@ pub struct Profile {
     pub losses: i32,
     #[serde(rename = "Wins")]
     pub wins: i32,
+    #[serde(rename = "Team_Name")]
+    pub clan: Option<String>,
+    #[serde(rename = "Level")]
+    pub level: i32,
+    #[serde(rename = "Platform")]
+    pub platform: Option<String>,
+    #[serde(rename = "Leaves")]
+    pub leaves: i32,
     pub ret_msg: Option<String>,
 }
 
